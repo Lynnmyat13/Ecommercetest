@@ -1,31 +1,24 @@
 <?php
 require_once "dbconnect.php";
-$sql = "select * from customer
-where income>=30000
-order by income desc
-limit 20";
-try {
+try{
+    $sql = "select * from category";
+    $connection->query($sql);
     $stmt = $connection->query($sql);
-    $status = $stmt->execute();
-    if ($status) {
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    }
+    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // print_r($categories);
 
-} catch (PDOException $e) {
+}
+catch(PDOException $e){
     echo $e->getMessage();
 }
-
-
 ?>
-
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Insert Book</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
   <body>
@@ -71,39 +64,31 @@ try {
                 Some links
             </div>
             <div class="col-md-10 col-sm 12 pt-5">
-              <a href="insertBook.php">Add new book</a>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Gender</th>
-                            <th>Income</th>
-                            <th>Marital Status</th>
-                            <th>Number of Vehicles</th>
-                            <th>Age</th>
-                            <th>State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if (isset($rows)) {
-                            foreach ($rows as $row) {
-                                echo "<tr>
-                                    <td>$row[custid]</td>
-                                    <td>$row[sex]</td>
-                                    <td>$row[income]</td>
-                                    <td>$row[marital_stat]</td>
-                                    <td>$row[num_vehicles]</td>
-                                    <td>$row[age]</td>
-                                    <td>$row[state]</td>
-                                    </tr>";
+                <form>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" name = "title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" name = "price">
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" name = "quantity" min="1">
+                    </div>
+                    <select class="form-select" name="category">
+                        <option selected>Select Category</option>
+                        <?php if(isset($categories)){
+                            foreach($categories as $category){
+                                echo "<option value=$category[category_id]>$category[category_name]</option>";
                             }
                         }
                         ?>
 
-                    </tbody>
-
-                </table>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
         </div>
     </div>
