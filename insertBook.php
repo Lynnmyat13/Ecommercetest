@@ -5,11 +5,34 @@ try{
     $connection->query($sql);
     $stmt = $connection->query($sql);
     $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $sql = "select * from publisher";
+    $connection->query($sql);
+    $stmt = $connection->query($sql);
+    $publishers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $sql = "select * from author";
+    $connection->query($sql);
+    $stmt = $connection->query($sql);
+    $authors = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // print_r($categories);
 
 }
 catch(PDOException $e){
     echo $e->getMessage();
+}
+if(isset($_POST["insert"])){
+  
+  $title = $_POST['title'];
+  $price = $_POST['price'];
+  $quantity = $_POST['quantity'];
+  $category = $_POST['category'];
+  $publisher = $_POST['publisher'];
+  $author = $_POST['author'];
+  $year = $_POST['year'];
+  $filename = $_FILES['bookcover']['name'];
+  $uploadPath = "covers/".$filename;
+  // store uploaded file to a specified folder
+  move_uploaded_file($_FILES["bookcover"]["tmp_name"], $uploadPath);
+  
 }
 ?>
 
@@ -24,7 +47,7 @@ catch(PDOException $e){
   <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img src="/images/photo1.png" style ="width: 100px; height: auto;"></a>
+    <a class="navbar-brand" href="#"><img src="/images/image.png" style ="width: 100px; height: auto;"></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -60,11 +83,11 @@ catch(PDOException $e){
 </nav>
     <div class="container-fluid pt-5 border"> 
         <div class="row">
-            <div class="col-md-2 col-sm 12 border bg-light">
+            <div class="col-md-4 col-sm 12 border bg-light">
                 Some links
             </div>
-            <div class="col-md-10 col-sm 12 pt-5">
-                <form>
+            <div class="col-md-6 col-sm 12 pt-5">
+                <form method="post" action="<?php $_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control" name = "title">
@@ -76,8 +99,10 @@ catch(PDOException $e){
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" name = "quantity" min="1">
-                    </div>
-                    <select class="form-select" name="category">
+                    </div>                 
+                    <br>
+
+                    <select class="form-select mb-4" name="category">
                         <option selected>Select Category</option>
                         <?php if(isset($categories)){
                             foreach($categories as $category){
@@ -87,7 +112,37 @@ catch(PDOException $e){
                         ?>
 
                     </select>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    
+                    <select class="form-select mb-4" name="publisher">
+                        <option selected>Select Publisher</option>
+                        <?php if(isset($publishers)){
+                            foreach($publishers as $publisher){
+                                echo "<option value=$publisher[publisher_id]>$publisher[publisher_name]</option>";
+                            }
+                        }
+                        ?>
+
+                      </select>
+                    <select class="form-select mb-4" name="author">
+                        <option selected>Select Author</option>
+                        <?php if(isset($authors)){
+                            foreach($authors as $author){
+                                echo "<option value=$author[author_id]>$author[author_name]</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                    <div class="mb-3">
+                        <label for="year" class="form-label">Year</label>
+                        <input type="number" class="form-control" name = "year" min="1">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bookcover" class="form-label">Choose Book Cover</label>
+                        <input type="file" class="form-control" name = "bookcover">
+                    </div>
+                
+                    <button type="submit" class="btn btn-primary" name="insert">Submit</button>
                 </form>
             </div>
         </div>
