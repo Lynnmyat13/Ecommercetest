@@ -33,6 +33,19 @@ if(isset($_POST["insert"])){
   // store uploaded file to a specified folder
   move_uploaded_file($_FILES["bookcover"]["tmp_name"], $uploadPath);
   
+  try{
+    $sql = "Insert into book (title, author, price, publisher, year, category, coverpath, quantity) values (?,?,?,?,?,?,?,?)";
+    $stmt = $connection->prepare($sql);
+    $status = $stmt->execute([$title,$author,$price,$publisher,$year,$category,$uploadPath,$quantity]);
+
+    if($status){
+      echo "insert success";
+      // header("Location:viewBook.php");
+    }
+  }catch(PDOException $e){
+    echo $e->getMessage();
+  }
+
 }
 ?>
 
